@@ -13,7 +13,7 @@ int main(void)
 {
 	uint32_t volatile *pPortAInReg =   (uint32_t*)0x40020010;
 	uint32_t *pPortAOutReg =  (uint32_t*)0x40020014;
-	// Mode 00 Input 01 Output 0xA800 0000 for port A reset
+	// Mode 00 Input 01 Output
 	uint32_t *pPortAModeReg = (uint32_t*)0x40020000;
 	// RCC
 	uint32_t *pClkCtrlReg =  (uint32_t*)0x40023830;
@@ -23,7 +23,7 @@ int main(void)
 	*pClkCtrlReg |= ( 1 << 0);
 
 
-	//set A0 input
+	//set PA0 in input mode
 	*pPortAModeReg |= (0 << 0);
 
 
@@ -31,13 +31,13 @@ int main(void)
 	{
 		uint8_t result = (uint8_t)(*pPortAInReg & 0x1) ;
 		if (result){
-			// make 10th bit position as 1 (SET)
+			// make 10th bit position as 1 (SET) as LD2 is connected with PA5
 			*pPortAModeReg |= ( 1 << 10);
 			//SET 5th bit of the output data register to make I/O pin-5 as HIGH
 			*pPortAOutReg |= ( 1 << 5);
 		}
 		else{
-			//b. make 10th bit position as 1 (SET)
+			// make 10th bit position as 1 (SET)
 			*pPortAModeReg |= ( 1 << 10);
 			//Turn OFF the LED
 			*pPortAOutReg &= ~( 1 << 5);

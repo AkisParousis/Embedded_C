@@ -3,6 +3,10 @@
 
 #define USART3_IRQ 39
 
+void USART3_IRQHandler(void){
+	printf("In USART3 ISR\n");
+}
+
 int main(void)
 {
 	uint32_t *pISPR1 = (uint32_t*)0XE000E204;
@@ -14,8 +18,4 @@ int main(void)
 	*pISER1 |= (1 << (USART3_IRQ % 32));
 
 	for(;;);
-}
-
-void USART3_IRQHandler(void){
-	printf("In USART3 ISR\n");
 }

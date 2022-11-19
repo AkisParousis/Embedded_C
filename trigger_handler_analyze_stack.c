@@ -20,9 +20,15 @@ __attribute__ ((naked)) void UsageFault_Handler(void){
 }
 
 void UsageFault_Handler_c(uint32_t *pBaseStackPointer){
+
 	uint32_t *pUFSR = (uint32_t *)0xE000ED2A;
 	printf("UsageFault Exception\n");
 	printf("%lx\n", *pUFSR);
+	
+	if (*pUFSR ==200){
+		printf("Division by zero Fault\n");
+	}
+	
 	printf("Value of R0 is: %lx\n", pBaseStackPointer[0]);
 	printf("Value of R1 is: %lx\n", pBaseStackPointer[1]);
 	printf("Value of R2 is: %lx\n", pBaseStackPointer[2]);
@@ -34,9 +40,13 @@ void UsageFault_Handler_c(uint32_t *pBaseStackPointer){
 
 }
 
+float divide(int x, int y){
+	return x/y;
+}
+
 int main(void)
 {
-    // 1. Enable all exceptions via System Handler Control and State Register
+    // 1a. Enable all exceptions via System Handler Control and State Register
 	uint32_t *pSHCSR = (uint32_t*)0xE000ED24;
 	/* We must enable
 	 * 18th bit -> UsgFaultException
@@ -45,7 +55,14 @@ int main(void)
 	 */
 	*pSHCSR |= 458752;
 
-	/* 3. Force processor to run undefined instruction.
+	// 1b. Enable DIV_0_TRP
+	uint32_t *pCCR = (uint32_t *)0xE000ED14;
+	// DIV_0_TRP, bit[4] Controls the trap on divide by 0
+	*pCCR |= (1<<4);
+		
+	// Depending the error you want to trigger, comment the other. E.g. to run 3b, comment 3a instructions. 
+	
+	/* 3a. Force processor to run undefined instruction.
 	 * According to ARMV7 Architecture 0xFFFFFFFF is not an opcode.
 	 * We assign this opcode value to an instruction.
 	 * M4 processor can fetch instructions from both sram and flash.
@@ -57,6 +74,9 @@ int main(void)
 
 	void (*sram_address)(void) = (void*)0x20010005;
 	sram_address();
+
+	// 3b. Attempt to divide by zero
+	divide(5,0);
 
 	for(;;);
 }

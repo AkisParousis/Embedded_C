@@ -1,4 +1,6 @@
 # Embedded_C
 Some minor embedded projects
 
-I used STM32F446RE Nucleo Board & STM32CubeIDE
+## Boards and IDEs used
+ - STM32F446RE Nucleo Board with STM32CubeIDE
+ - nRF52840 DK using VS Code IDE and nRF Connect for VS Code
